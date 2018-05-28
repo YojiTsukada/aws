@@ -14,23 +14,27 @@ def lambda_handler(event, context):
 
     # Set time
     now = datetime.now(JST)
-    filename = now.strftime("lambda.log_%Y%m%d_%H%M%S")
+    filename = now.strftime("lambda.log_%Y%m%d")
 
-    # Get FileName.
+    # Get filename.
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8') 
 
-    # Check MIME TYPE.
+    # Check MIME type.
     bucket_name = 'frombk'
-    s3.Bucket(bucket_name).download_file(key, '/tmp/file')
-    mime = mimetypes.guess_type('/tmp/file')[0]
+    s3.Bucket(bucket_name).download_file(key, '/tmp/' + key)
+    mime = mimetypes.guess_type('/tmp/' + key)[0]
 
-    # make Temporaly.
-    with open('/tmp/tmp.log', "w") as file:
+    # Download log 
+    bucket_name = 'detbk'
+    s3.Bucket(bucket_name).download_file(filename, '/tmp/' + filename)
+
+    # Make Temporaly.
+    with open('/tmp/' + filename, "a") as file:
         message = key + "," + str(mime)  + "," +  str(now)
-        file.write(message)
+        file.write(message + '\n')
 
     # upload to S3
     bucket_name = 'detbk'
-    s3.Bucket(bucket_name).upload_file('/tmp/tmp.log', filename)
+    s3.Bucket(bucket_name).upload_file('/tmp/' + filename, filename)
 
-    return  mime
+    return
