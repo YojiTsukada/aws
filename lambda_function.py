@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     now = datetime.now(JST)
     filename = now.strftime("lambda.log_%Y%m%d")
 
-    # Get filename.
+    # Get file.
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8') 
 
     # Check MIME type.
@@ -26,7 +26,12 @@ def lambda_handler(event, context):
 
     # Download log 
     bucket_name = 'detbk'
-    s3.Bucket(bucket_name).download_file(filename, '/tmp/' + filename)
+
+    try:
+        s3.Bucket(bucket_name).download_file(filename, '/tmp/' + filename)
+    except:
+        # make blank file
+        with open('/tmp/' + filename,"w"):pass    
 
     # Make Temporaly.
     with open('/tmp/' + filename, "a") as file:
