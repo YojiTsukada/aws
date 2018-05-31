@@ -14,6 +14,7 @@ def lambda_handler(event, context):
 
     # Set time
     now = datetime.now(JST)
+    time = "{0:%Y%m%d%-H%M%S}".format(now)
     filename = now.strftime("lambda.log_%Y%m%d")
 
     # Get file.
@@ -35,7 +36,7 @@ def lambda_handler(event, context):
 
     # Make Temporaly.
     with open('/tmp/' + filename, "a") as file:
-        message = key + "," + str(mime)  + "," +  str(now)
+        message = key + "," + str(mime)  + "," +  str(time)
         file.write(message + '\n')
 
     # upload to S3
