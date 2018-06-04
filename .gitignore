@@ -1,4 +1,13 @@
 # AWS Credential
 *credentials.csv
+account.py
 
 
+# Cache
+__pycache__/*
+
+# vscode
+.vscode
+
+# for test
+test.py
